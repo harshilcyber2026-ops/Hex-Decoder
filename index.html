@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Hex to Text — FlagVault CTF</title>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔢</text></svg>"/>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="#" class="nav-brand">
+    <span class="bracket">[</span><span class="brand-flag">FLAG</span>VAULT<span class="bracket">]</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#">Challenges</a></li>
+    <li><a href="#" class="active">Hex Decode</a></li>
+    <li><a href="#">Scoreboard</a></li>
+  </ul>
+  <div class="nav-status"><div class="status-dot"></div>CHALLENGE LIVE</div>
+</nav>
+
+<div class="page-wrap">
+
+  <header class="page-header" data-index="E1">
+    <div class="page-eyebrow">ENCODING · CHALLENGE #E1</div>
+    <h1 class="page-title"><span class="hl2">Hex</span> <span class="hl">Decoder</span></h1>
+    <p class="page-desc">
+      Convert this hex string to text and extract the hidden flag.<br/>
+      Every pair of hex digits maps to exactly one ASCII character.
+    </p>
+  </header>
+
+  <div class="stats-strip">
+    <div class="stat-box"><span class="stat-val">50</span><span class="stat-label">Points</span></div>
+    <div class="stat-box"><span class="stat-val amber">Beginner</span><span class="stat-label">Difficulty</span></div>
+    <div class="stat-box"><span class="stat-val red">287</span><span class="stat-label">Solves</span></div>
+    <div class="stat-box"><span class="stat-val">Encoding</span><span class="stat-label">Category</span></div>
+  </div>
+
+  <div class="hx-layout">
+
+    <!-- ══════ LEFT ══════ -->
+    <div class="hx-left">
+
+      <!-- Challenge hex string -->
+      <div class="sec-divider"><h3>Challenge Hex String</h3></div>
+      <div class="hex-challenge-card">
+        <div class="hcc-bar">
+          <span class="hcc-dot hcc-r"></span>
+          <span class="hcc-dot hcc-y"></span>
+          <span class="hcc-dot hcc-g"></span>
+          <span class="hcc-title">challenge.hex — convert to ASCII text</span>
+        </div>
+        <div class="hcc-body">
+          <div class="hcc-label">// HEX STRING — spaces are formatting only</div>
+          <div class="hcc-hex" id="hcc-hex">466c6167566175 6c747b6830785f 6d345f337a707779 7d</div>
+          <div class="hcc-actions">
+            <button class="btn btn-primary hcc-decode-btn" onclick="runDecode()">⚡ Decode Now</button>
+            <button class="hcc-copy-btn" onclick="copyHex()">📋 Copy Clean Hex</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive decoder -->
+      <div class="sec-divider"><h3>Interactive Hex Decoder</h3></div>
+      <div class="decoder-card">
+        <div class="dc-label">// ENTER ANY HEX STRING — LIVE DECODE AS YOU TYPE</div>
+        <div class="dc-input-row">
+          <input class="dc-input" id="dc-input" type="text"
+                 placeholder="e.g. 48 65 6c 6c 6f   or   48656c6c6f"
+                 autocomplete="off" spellcheck="false"
+                 oninput="liveDecodeInput(this.value)"/>
+          <button class="btn btn-primary dc-btn"
+                  onclick="liveDecodeInput(document.getElementById('dc-input').value)">Decode</button>
+        </div>
+
+        <div class="dc-output-wrap">
+          <div class="dco-header">
+            <span class="dco-label">// ASCII OUTPUT</span>
+            <span class="dco-badge" id="dco-badge">—</span>
+          </div>
+          <div class="dc-output" id="dc-output">
+            <span class="do-dim">Output will appear here…</span>
+          </div>
+        </div>
+
+        <!-- Byte-by-byte breakdown -->
+        <div class="breakdown-wrap" id="breakdown-wrap" style="display:none">
+          <div class="bw-label">// BYTE-BY-BYTE BREAKDOWN — hover a cell for info</div>
+          <div class="byte-grid" id="byte-grid"></div>
+        </div>
+      </div>
+
+      <!-- Hex reference table -->
+      <div class="sec-divider"><h3>ASCII ↔ Hex Reference Table</h3></div>
+      <div class="hex-table-card">
+        <div class="htc-tabs">
+          <button class="htc-tab active" onclick="switchHexTab('lower')">a – z</button>
+          <button class="htc-tab" onclick="switchHexTab('upper')">A – Z</button>
+          <button class="htc-tab" onclick="switchHexTab('digits')">0 – 9</button>
+          <button class="htc-tab" onclick="switchHexTab('special')">{ } _ . !</button>
+        </div>
+        <div class="htc-body">
+          <div class="htc-grid" id="htc-grid"></div>
+        </div>
+        <div class="htc-search-row">
+          <span class="htc-search-icon">🔍</span>
+          <input class="htc-search" id="htc-search" type="text"
+                 placeholder="Search: char ('F'), hex ('46'), or decimal ('70')"
+                 oninput="searchHexTable(this.value)"/>
+        </div>
+        <div class="htc-results" id="htc-results"></div>
+      </div>
+
+      <!-- Flag reveal -->
+      <div id="flag-reveal" class="flag-reveal hidden">
+        <div class="fr-glow"></div>
+        <div class="fr-icon">🔢</div>
+        <h2 class="fr-title">Hex Decoded!</h2>
+        <p class="fr-sub">Each pair of hex digits is one ASCII character — no key, no cipher, just a fixed base-16 encoding.</p>
+        <div class="fr-box">
+          <span class="fr-lbl">🚩 DECODED FLAG</span>
+          <code class="fr-val" id="fr-val"></code>
+          <button class="btn-copy-sm" onclick="copyFlag()">📋 Copy</button>
+          <div class="copy-toast hidden" id="copy-toast">✓ Copied!</div>
+        </div>
+        <div class="fr-proof">
+          <div class="fp-row"><span class="fp-k">Hex input</span><span class="fp-v fp-hex">466c61675661756c747b6830785f6d345f337a7077797d</span></div>
+          <div class="fp-row"><span class="fp-k">Encoding</span><span class="fp-v fp-enc">Hexadecimal → ASCII (2 hex digits = 1 byte)</span></div>
+          <div class="fp-row"><span class="fp-k">Byte count</span><span class="fp-v fp-bytes">23 hex pairs → 23 ASCII characters</span></div>
+        </div>
+      </div>
+
+    </div><!-- /left -->
+
+    <!-- ══════ RIGHT ══════ -->
+    <div class="hx-right">
+
+      <div class="sec-divider"><h3>Challenge Info</h3></div>
+      <div class="info-panel">
+        <div class="info-row"><span class="info-key">Encoding</span><span class="tag tag-amber">Hexadecimal</span></div>
+        <div class="info-row"><span class="info-key">Input</span><code>23 hex pairs</code></div>
+        <div class="info-row"><span class="info-key">Category</span><span class="tag tag-green">Encoding</span></div>
+        <div class="info-row"><span class="info-key">Points</span><span style="color:var(--accent);font-family:var(--font-hud)">50</span></div>
+      </div>
+
+      <div class="sec-divider"><h3>Background</h3></div>
+      <div class="desc-block">
+        <p>Hexadecimal (base-16) uses digits <code>0–9</code> and letters <code>a–f</code>. Each pair of hex digits represents one byte, which maps directly to an ASCII character.</p>
+        <br/>
+        <p>Example: <code>0x46</code> = decimal 70 = ASCII <code>'F'</code>. No key needed — it is a fixed, reversible encoding.</p>
+      </div>
+
+      <!-- Step by step -->
+      <div class="sec-divider"><h3>How to Decode</h3></div>
+      <div class="howto-card">
+        <div class="ht-step">
+          <div class="ht-n">01</div>
+          <div class="ht-t"><strong>Strip the spaces</strong><br/><code>466c61675661...</code></div>
+        </div>
+        <div class="ht-arr">↓</div>
+        <div class="ht-step">
+          <div class="ht-n">02</div>
+          <div class="ht-t"><strong>Split into 2-char pairs</strong><br/><code>46 6c 61 67 56 61 …</code></div>
+        </div>
+        <div class="ht-arr">↓</div>
+        <div class="ht-step">
+          <div class="ht-n">03</div>
+          <div class="ht-t"><strong>Convert each pair to ASCII</strong><br/><code>0x46=70='F'</code> &nbsp;<code>0x6c=108='l'</code> …</div>
+        </div>
+        <div class="ht-arr">↓</div>
+        <div class="ht-step ht-flag">
+          <div class="ht-n">🚩</div>
+          <div class="ht-t"><strong>Concatenate all characters</strong><br/>Read the full flag!</div>
+        </div>
+      </div>
+
+      <!-- One-liner solves -->
+      <div class="sec-divider"><h3>One-Liner Solves</h3></div>
+      <div class="methods-list">
+        <div class="method-item">
+          <div class="method-title">🐍 Python 3</div>
+          <div class="method-code"><pre>bytes.fromhex("466c61675661756c74\
+7b6830785f6d345f337a7077797d").decode()</pre></div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">🐚 Bash / xxd</div>
+          <div class="method-code"><pre>echo "466c6167..." | xxd -r -p</pre></div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">🌐 CyberChef</div>
+          <div class="method-code"><pre>Operations → From Hex → paste &amp; bake</pre></div>
+        </div>
+        <div class="method-item">
+          <div class="method-title">⚡ This Page</div>
+          <div class="method-code"><pre>Click "⚡ Decode Now" on the left!</pre></div>
+        </div>
+      </div>
+
+      <!-- Hints -->
+      <div class="sec-divider"><h3>Hints</h3></div>
+      <div class="hints-list">
+        <div class="hint-card">
+          <div class="hint-header" onclick="toggleHint(1)">
+            <span>💡 HINT 1</span>
+            <span class="hint-cost tag tag-green">Free</span>
+            <span class="hint-toggle" id="h1t">▼ Reveal</span>
+          </div>
+          <div class="hint-body hidden" id="h1b">
+            Ignore the spaces — they are just visual formatting. Remove them and treat it as one continuous hex string. Every 2 hex characters = 1 ASCII character. First pair: <code>46</code> → hex 0x46 → decimal 70 → ASCII <code>'F'</code>.
+          </div>
+        </div>
+        <div class="hint-card">
+          <div class="hint-header" onclick="toggleHint(2)">
+            <span>💡 HINT 2</span>
+            <span class="hint-cost tag tag-red">−10 pts</span>
+            <span class="hint-toggle" id="h2t">▼ Reveal</span>
+          </div>
+          <div class="hint-body hidden" id="h2b">
+            The first 9 pairs decode to <code>FlagVault</code> and <code>7b</code> = <code>'{'</code>. Keep decoding the remaining pairs — or paste the full clean hex string into the Interactive Decoder above and click Decode!
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit -->
+      <div class="sec-divider"><h3>Submit Flag</h3></div>
+      <div class="flag-submit-panel">
+        <div class="form-group flag-input-wrap">
+          <span class="flag-prefix">FlagVault{</span>
+          <input class="form-control" id="flag-input" type="text"
+                 placeholder="your_flag_here" autocomplete="off"/>
+        </div>
+        <button class="btn btn-primary" onclick="submitFlag()" style="width:100%">
+          &gt;_ SUBMIT FLAG
+        </button>
+        <div class="submit-result" id="flag-result"></div>
+      </div>
+
+    </div><!-- /right -->
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-brand">FLAG<span>VAULT</span> CTF</div>
+  <div class="footer-copy">Challenge #E1 · Encoding · Hexadecimal → ASCII</div>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
