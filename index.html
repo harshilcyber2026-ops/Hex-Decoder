@@ -13,11 +13,6 @@
   <a href="#" class="nav-brand">
     <span class="bracket">[</span><span class="brand-flag">FLAG</span>VAULT<span class="bracket">]</span>
   </a>
-  <ul class="nav-links">
-    <li><a href="#">Challenges</a></li>
-    <li><a href="#" class="active">Hex Decode</a></li>
-    <li><a href="#">Scoreboard</a></li>
-  </ul>
   <div class="nav-status"><div class="status-dot"></div>CHALLENGE LIVE</div>
 </nav>
 
@@ -31,13 +26,6 @@
       Every pair of hex digits maps to exactly one ASCII character.
     </p>
   </header>
-
-  <div class="stats-strip">
-    <div class="stat-box"><span class="stat-val">50</span><span class="stat-label">Points</span></div>
-    <div class="stat-box"><span class="stat-val amber">Beginner</span><span class="stat-label">Difficulty</span></div>
-    <div class="stat-box"><span class="stat-val red">287</span><span class="stat-label">Solves</span></div>
-    <div class="stat-box"><span class="stat-val">Encoding</span><span class="stat-label">Category</span></div>
-  </div>
 
   <div class="hx-layout">
 
@@ -198,46 +186,6 @@
           <div class="method-code"><pre>Click "⚡ Decode Now" on the left!</pre></div>
         </div>
       </div>
-
-      <!-- Hints -->
-      <div class="sec-divider"><h3>Hints</h3></div>
-      <div class="hints-list">
-        <div class="hint-card">
-          <div class="hint-header" onclick="toggleHint(1)">
-            <span>💡 HINT 1</span>
-            <span class="hint-cost tag tag-green">Free</span>
-            <span class="hint-toggle" id="h1t">▼ Reveal</span>
-          </div>
-          <div class="hint-body hidden" id="h1b">
-            Ignore the spaces — they are just visual formatting. Remove them and treat it as one continuous hex string. Every 2 hex characters = 1 ASCII character. First pair: <code>46</code> → hex 0x46 → decimal 70 → ASCII <code>'F'</code>.
-          </div>
-        </div>
-        <div class="hint-card">
-          <div class="hint-header" onclick="toggleHint(2)">
-            <span>💡 HINT 2</span>
-            <span class="hint-cost tag tag-red">−10 pts</span>
-            <span class="hint-toggle" id="h2t">▼ Reveal</span>
-          </div>
-          <div class="hint-body hidden" id="h2b">
-            The first 9 pairs decode to <code>FlagVault</code> and <code>7b</code> = <code>'{'</code>. Keep decoding the remaining pairs — or paste the full clean hex string into the Interactive Decoder above and click Decode!
-          </div>
-        </div>
-      </div>
-
-      <!-- Submit -->
-      <div class="sec-divider"><h3>Submit Flag</h3></div>
-      <div class="flag-submit-panel">
-        <div class="form-group flag-input-wrap">
-          <span class="flag-prefix">FlagVault{</span>
-          <input class="form-control" id="flag-input" type="text"
-                 placeholder="your_flag_here" autocomplete="off"/>
-        </div>
-        <button class="btn btn-primary" onclick="submitFlag()" style="width:100%">
-          &gt;_ SUBMIT FLAG
-        </button>
-        <div class="submit-result" id="flag-result"></div>
-      </div>
-
     </div><!-- /right -->
   </div>
 </div>
